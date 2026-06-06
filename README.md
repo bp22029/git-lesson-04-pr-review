@@ -5,6 +5,10 @@
 - 前のレッスン: [git-lesson-03-conflict](https://github.com/bp22029/git-lesson-03-conflict.git)
 - このレッスンのテンプレート: [git-lesson-04-pr-review](https://github.com/bp22029/git-lesson-04-pr-review.git)
 - 次のレッスン: [git-lesson-05-actions-artifact](https://github.com/bp22029/git-lesson-05-actions-artifact.git)
+- グループA: [git-lesson-04-pr-review-groupA](https://github.com/bp22029/git-lesson-04-pr-review-groupA.git)
+- グループB: [git-lesson-04-pr-review-groupB](https://github.com/bp22029/git-lesson-04-pr-review-groupB.git)
+- グループC: [git-lesson-04-pr-review-groupC](https://github.com/bp22029/git-lesson-04-pr-review-groupC.git)
+
 
 この演習で学生が clone するのは、教員から指定されたグループ用共有リポジトリです。上のテンプレートリポジトリを直接 clone しないでください。
 
