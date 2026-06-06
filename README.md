@@ -1,5 +1,13 @@
 # 04 Pull Request とレビュー
 
+## レッスンのリポジトリ
+
+- 前のレッスン: [git-lesson-03-conflict](https://github.com/bp22029/git-lesson-03-conflict.git)
+- このレッスンのテンプレート: [git-lesson-04-pr-review](https://github.com/bp22029/git-lesson-04-pr-review.git)
+- 次のレッスン: [git-lesson-05-actions-artifact](https://github.com/bp22029/git-lesson-05-actions-artifact.git)
+
+この演習で学生が clone するのは、教員から指定されたグループ用共有リポジトリです。上のテンプレートリポジトリを直接 clone しないでください。
+
 ## 学習目標
 
 この演習では、feature ブランチで変更を行い、GitHub 上で Pull Request を作成し、レビューを受ける流れを体験します。
@@ -56,7 +64,30 @@ Pull Request は、feature ブランチの変更を `develop` に取り込む前
 
 ## 手順
 
-### 1. 現在の状態を確認する
+### 1. 共有リポジトリを clone する
+
+`<GitHubリポジトリURL>` は、教員から指定されたグループ用共有リポジトリの URL に置き換えます。
+
+このレッスンでは、授業用の親フォルダにある `04` フォルダを使います。
+
+```bash
+cd 04
+```
+
+```bash
+git clone <GitHubリポジトリURL>
+```
+
+```bash
+cd <リポジトリ名>
+```
+
+確認ポイント:
+
+- グループ全員が同じ共有リポジトリを clone しているか確認します。
+- ターミナルが clone したリポジトリの中にいる状態で、次に進みます。
+
+### 2. 現在の状態を確認する
 
 ```bash
 git status
@@ -67,7 +98,7 @@ git status
 - commit していない変更がないか確認します。
 - 変更が残っている場合は、先に commit するか教員に相談してください。
 
-### 2. develop ブランチに移動する
+### 3. develop ブランチに移動する
 
 この演習では、教員が先に `develop` ブランチを用意している想定です。
 
@@ -102,7 +133,7 @@ git push -u origin develop
 
 - GitHub の branch 一覧に `develop` が表示されるか確認します。
 
-### 3. feature ブランチを作成する
+### 4. feature ブランチを作成する
 
 ```bash
 git switch -c feature/add-research-introduction-yourname
@@ -113,7 +144,7 @@ git switch -c feature/add-research-introduction-yourname
 - `On branch feature/add-research-introduction-yourname` と表示されるか確認します。
 - `yourname` の部分は、自分の名前に置き換えます。
 
-### 4. 自分の研究紹介ファイルを作成する
+### 5. 自分の研究紹介ファイルを作成する
 
 VS Code で `research_introductions` フォルダを開き、自分用の Markdown ファイルを作成します。
 
@@ -155,7 +186,7 @@ research_introductions/yamada.md
 - 個人情報、未公開データ、研究室の秘密情報は書きません。
 - 1つの PR で扱うファイルは、基本的に自分の研究紹介ファイルだけにします。
 
-### 5. 変更を commit する
+### 6. 変更を commit する
 
 ```bash
 git status
@@ -177,7 +208,7 @@ git commit -m "研究紹介を追加"
 git log --oneline
 ```
 
-### 6. feature ブランチを GitHub に push する
+### 7. feature ブランチを GitHub に push する
 
 ```bash
 git push -u origin feature/add-research-introduction-yourname
@@ -188,7 +219,7 @@ git push -u origin feature/add-research-introduction-yourname
 - GitHub の画面に Pull Request 作成ボタンが表示されることがあります。
 - branch 一覧に `feature/add-research-introduction-yourname` が表示されるか確認します。
 
-### 7. GitHub 上で Pull Request を作成する
+### 8. GitHub 上で Pull Request を作成する
 
 GitHub のリポジトリ画面で Pull Request を作成します。
 
@@ -218,7 +249,7 @@ PR 本文には、`.github/pull_request_template.md` に沿って次の内容を
 - 変更内容、確認したこと、レビューしてほしい点を書きます。
 - PR の URL を作業記録に残します。
 
-### 8. グループでレビュー担当を決める
+### 9. グループでレビュー担当を決める
 
 2人組の場合は、お互いの Pull Request をレビューします。
 
@@ -244,7 +275,7 @@ Aさん → Bさん → Cさん → Aさん
 - 全員が1つ以上の PR をレビューします。
 - レビュー担当が重ならないようにします。
 
-### 9. レビューを行う
+### 10. レビューを行う
 
 `REVIEW_GUIDE.md` を見ながら、担当する Pull Request を確認します。
 
@@ -276,7 +307,7 @@ Pull requests -> 担当する PR -> Files changed
 - 公開してはいけない情報が含まれていないか
 - PR 本文にレビューしてほしい点が書かれているか
 
-### 10. レビューコメントに対応する
+### 11. レビューコメントに対応する
 
 修正が必要な場合は、同じ feature ブランチで追加修正します。
 
@@ -301,7 +332,7 @@ git push
 - 追加 commit が同じ Pull Request に反映されるか確認します。
 - レビューコメントに返信して、どのように直したかを書きます。
 
-### 11. Pull Request を merge する
+### 12. Pull Request を merge する
 
 教員の指示がある場合は、レビュー後に Pull Request を `develop` に merge します。
 
@@ -427,7 +458,8 @@ compare: feature/add-research-introduction-yourname
 
 ## 提出前チェックリスト
 
-- [ ] `develop` ブランチを作成した
+- [ ] グループ用共有リポジトリを `04` フォルダに clone した
+- [ ] `develop` ブランチに移動した
 - [ ] 自分用の feature ブランチを作成した
 - [ ] `research_introductions/自分の名前.md` を作成した
 - [ ] 変更を commit した
