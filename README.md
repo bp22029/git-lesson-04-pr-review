@@ -1,78 +1,117 @@
-# 04 Pull Request とレビュー
+# 03 複数人でのコンフリクト練習
 
 ## レッスンのリポジトリ
 
-- 前のレッスン: [git-lesson-03-conflict](https://github.com/bp22029/git-lesson-03-conflict.git)
-- このレッスンのテンプレート: [git-lesson-04-pr-review](https://github.com/bp22029/git-lesson-04-pr-review.git)
-- 次のレッスン: [git-lesson-05-actions-artifact](https://github.com/bp22029/git-lesson-05-actions-artifact.git)
+- 前のレッスン: [git-lesson-02-gitflow](https://github.com/bp22029/git-lesson-02-gitflow.git)
+- このレッスンのテンプレート: [git-lesson-03-conflict](https://github.com/bp22029/git-lesson-03-conflict.git)
+- 次のレッスン: [git-lesson-04-pr-review](https://github.com/bp22029/git-lesson-04-pr-review.git)
 
 この演習で学生が clone するのは、教員から指定されたグループ用共有リポジトリです。上のテンプレートリポジトリを直接 clone しないでください。
 
 ## 学習目標
 
-この演習では、feature ブランチで変更を行い、GitHub 上で Pull Request を作成し、レビューを受ける流れを体験します。
+この演習では、2〜3人で同じ GitHub リポジトリを使い、同じファイルの同じ行を別々に編集するとコンフリクトが起きることを体験します。
 
 終了後、次のことを説明できるようになることを目標にします。
 
-- Pull Request の目的を説明できる
-- feature ブランチを GitHub に push できる
-- PR テンプレートに沿って変更内容を書ける
-- レビュー観点に沿って他の人の変更を確認できる
-- レビューコメントを受けて、必要な修正を追加 commit できる
+- 複数人が同じ行を変更したときに、なぜコンフリクトが起きるのかを説明できる
+- `git push` が拒否される場面を確認できる
+- `git pull --no-rebase origin main` によってコンフリクトが発生する場面を確認できる
+- コンフリクトマーカーを見つけ、内容を手動で修正できる
+- コンフリクト解消後に `git add`、`git commit`、`git push` を実行できる
 
 ## 前提条件
 
-- GitHub に push できる
-- `main`、`develop`、`feature` ブランチの役割を学んでいる
-- feature ブランチを作成できる
-- GitHub の画面で Pull Request を開ける
+- Git の基本操作を実行できる
+- `git status`、`git add`、`git commit`、`git push` を使ったことがある
+- VS Code で Markdown ファイルを編集できる
+- 2〜3人で同じ共有リポジトリにアクセスできる
 
 ## この演習だけの重要な前提
 
-この演習では、グループごとに1つの共有リポジトリを使います。
+この演習では、1人1リポジトリではなく、2〜3人で同じ GitHub リポジトリを使います。
 
-グループ全員が同じ共有リポジトリを clone し、各自が自分用の feature ブランチを作成します。
+```text
+通常の演習: 学生ごとに自分用リポジトリを使う
+この演習:  グループごとに1つの共有リポジトリを使う
+```
 
-レビューは GitHub の Pull Request 画面で行います。レビュー担当者が、相手のブランチにローカルで切り替える必要はありません。
+これはコンフリクトを体験するための授業用の設定です。普段の共同作業では、いきなり同じ `main` ブランチへ直接 push するのではなく、feature ブランチや Pull Request を使うことが多いです。
+
+## 教員の事前準備
+
+教員は、グループごとにこのテンプレートから共有リポジトリを作成します。
+
+リポジトリ名の例:
+
+```text
+git-lesson-03-conflict-group-01
+git-lesson-03-conflict-group-02
+```
+
+準備すること:
+
+- グループごとに1つの共有リポジトリを作成する
+- 2〜3人の学生を同じリポジトリの collaborator に追加する
+- 学生に、自分のグループのリポジトリ URL を配布する
+- この演習では全員が同じ `main` ブランチで作業することを伝える
+
+注意:
+
+- 認証情報、トークン、SSH 秘密鍵は共有しません。
+- collaborator 追加や Organization の権限設定は、授業の運用に合わせて教員が行います。
 
 ## このリポジトリで使うファイル
 
 ```text
-research_introductions/README.md
-.github/pull_request_template.md
-REVIEW_GUIDE.md
+group_research_note.md
 ```
 
-この演習では GitHub Actions は扱いません。Actions と Artifact は演習05で扱います。
+このファイルの同じ行を、複数人が別々の内容に変更します。
 
-## ブランチと PR の流れ
+対象行:
 
 ```text
-main
-  |
-  o-------------------------o
-   \                       ^
-    develop                |
-      |                    |
-      o-------------o------+
-       \           /
-        feature/add-research-introduction-yourname
-             Pull Request
+研究テーマ候補: ここに1つの候補を書く。
 ```
 
-Pull Request は、feature ブランチの変更を `develop` に取り込む前に、内容を説明し、他の人に確認してもらうための場所です。
+## 全体の流れ
+
+```text
+学生A              GitHub共有リポジトリ              学生B
+  |                       |                            |
+  | edit + commit         |                            |
+  | git push -----------> |                            |
+  |                       |              edit + commit |
+  |                       | <----------- git pull      |
+  |                       |          conflict 発生     |
+  |                       |                            |
+```
+
+3人で行う場合は、学生Aが最初に push し、学生Bが解消して push したあと、学生Cが同じように pull してコンフリクトを体験します。
+
+## 役割
+
+2人の場合:
+
+- 学生A: 最初に push する人
+- 学生B: 後から pull してコンフリクトを解消する人
+
+3人の場合:
+
+- 学生A: 最初に push する人
+- 学生B: 1回目のコンフリクトを解消して push する人
+- 学生C: 2回目のコンフリクトを解消して push する人
 
 ## 手順
 
-### 1. 共有リポジトリを clone する
+ここまでは、複数人でコンフリクトが起きる考え方です。ここからは、説明を読みながらグループで同じ操作を行う基本手順です。
 
-`<GitHubリポジトリURL>` は、教員から指定されたグループ用共有リポジトリの URL に置き換えます。
+### 1. 全員が同じ共有リポジトリを clone する
 
-このレッスンでは、授業用の親フォルダにある `04` フォルダを使います。
+`<GitHubリポジトリURL>` は、教員から指定されたグループ用リポジトリの URL に置き換えます。
 
-```bash
-cd 04
-```
+このレッスンでは、01 で作成した授業用の親フォルダを使います。授業用の親フォルダで次を実行します。
 
 ```bash
 git clone <GitHubリポジトリURL>
@@ -84,10 +123,10 @@ cd <リポジトリ名>
 
 確認ポイント:
 
-- グループ全員が同じ共有リポジトリを clone しているか確認します。
-- ターミナルが clone したリポジトリの中にいる状態で、次に進みます。
+- グループ全員が同じ GitHub リポジトリを clone しているか確認します。
+- `group_research_note.md` があるか確認します。
 
-### 2. 現在の状態を確認する
+### 2. 全員が現在の状態を確認する
 
 ```bash
 git status
@@ -95,232 +134,153 @@ git status
 
 確認ポイント:
 
-- commit していない変更がないか確認します。
-- 変更が残っている場合は、先に commit するか教員に相談してください。
+- `On branch main` と表示されるか確認します。
+- `nothing to commit` と表示されるか確認します。
 
-### 3. develop ブランチに移動する
+### 3. 全員が同じ行を編集する
 
-この演習では、教員が先に `develop` ブランチを用意している想定です。
-
-まず、GitHub 側の branch 情報を取得します。
-
-```bash
-git fetch origin
-```
-
-次に、`develop` ブランチに移動します。
-
-```bash
-git switch develop
-```
-
-確認ポイント:
-
-- `Switched to branch 'develop'` と表示されるか確認します。
-- `Your branch is up to date with 'origin/develop'.` のように表示されれば、GitHub 上の `develop` とつながっています。
-
-教員から `develop` ブランチを作成するように指示された場合だけ、次を実行します。
-
-```bash
-git switch -c develop
-```
-
-```bash
-git push -u origin develop
-```
-
-確認ポイント:
-
-- GitHub の branch 一覧に `develop` が表示されるか確認します。
-
-### 4. feature ブランチを作成する
-
-```bash
-git switch -c feature/add-research-introduction-yourname
-```
-
-確認ポイント:
-
-- `On branch feature/add-research-introduction-yourname` と表示されるか確認します。
-- `yourname` の部分は、自分の名前に置き換えます。
-
-### 5. 自分の研究紹介ファイルを作成する
-
-VS Code で `research_introductions` フォルダを開き、自分用の Markdown ファイルを作成します。
-
-ファイル名の例:
+VS Code で `group_research_note.md` を開き、次の行を探します。
 
 ```text
-research_introductions/yamada.md
+研究テーマ候補: ここに1つの候補を書く。
 ```
 
-公開できない研究内容は書かず、公開してよい範囲にします。必要であれば、架空の研究テーマでもかまいません。
+この行を、各自が別々の内容に変更します。
 
-書く内容の例:
+学生Aの例:
 
-```markdown
-# 山田の研究紹介
+```text
+研究テーマ候補: 学習ログを使って、学生のつまずきやすい操作を調べる。
+```
 
-## 研究テーマ
+学生Bの例:
 
-水質データを使った季節変化の分析
+```text
+研究テーマ候補: Javaのエラーメッセージを分類して、初学者向けの説明を考える。
+```
 
-## 研究の目的
+学生Cの例:
 
-川の水質が季節によってどのように変化するかを調べます。
-
-## 使うデータ
-
-- 月ごとの水温
-- 月ごとの pH
-- 月ごとの観測地点
-
-## まだ分からないこと
-
-- 雨が多い時期に値がどのくらい変わるか
+```text
+研究テーマ候補: 実験ノートの書き方が再現性に与える影響を調べる。
 ```
 
 確認ポイント:
 
-- 専門外の人にも読める短い説明にします。
-- 個人情報、未公開データ、研究室の秘密情報は書きません。
-- 1つの PR で扱うファイルは、基本的に自分の研究紹介ファイルだけにします。
+- 全員が同じ行を変更します。
+- 同じファイルでも、違う行を編集するとコンフリクトが起きない場合があります。
 
-### 6. 変更を commit する
+### 4. 全員が commit する
+
+全員が自分の PC で次を実行します。
 
 ```bash
 git status
 ```
 
 ```bash
-git add research_introductions/yamada.md
+git add group_research_note.md
 ```
 
 ```bash
-git commit -m "研究紹介を追加"
+git commit -m "研究テーマ候補を追加"
 ```
 
 確認ポイント:
 
-- `git log --oneline` で commit が増えているか確認します。
+- この時点では、まだ GitHub には送られていません。
+- 全員が commit してから次に進みます。
+
+### 5. 学生Aが最初に push する
+
+学生Aだけが実行します。
 
 ```bash
-git log --oneline
+git push
 ```
 
-### 7. feature ブランチを GitHub に push する
+確認ポイント:
+
+- 学生Aの push は成功するはずです。
+- GitHub 上の `group_research_note.md` に、学生Aの内容が表示されます。
+
+### 6. 学生Bが push して拒否されることを確認する
+
+学生Bが実行します。
 
 ```bash
-git push -u origin feature/add-research-introduction-yourname
+git push
 ```
 
 確認ポイント:
 
-- GitHub の画面に Pull Request 作成ボタンが表示されることがあります。
-- branch 一覧に `feature/add-research-introduction-yourname` が表示されるか確認します。
+- `rejected` や `fetch first` のような表示が出ます。
+- これは、GitHub 側に学生Aの新しい commit があるためです。
+- この表示は、この演習では期待される結果です。
 
-### 8. GitHub 上で Pull Request を作成する
+### 7. 学生Bが pull してコンフリクトを発生させる
 
-GitHub のリポジトリ画面で Pull Request を作成します。
+学生Bが実行します。
 
-設定例:
-
-```text
-base: develop
-compare: feature/add-research-introduction-yourname
-```
-
-PR 本文には、`.github/pull_request_template.md` に沿って次の内容を書きます。
-
-```text
-変更内容:
-- 自分の研究紹介ファイルを追加しました。
-
-変更した理由:
-- グループのメンバーに研究内容を説明し、レビューを受けるためです。
-
-レビューしてほしい点:
-- 専門外の人にも研究目的が分かるか確認してほしいです。
+```bash
+git pull --no-rebase origin main
 ```
 
 確認ポイント:
 
-- `.github/pull_request_template.md` の内容が PR 本文に表示されるか確認します。
-- 変更内容、確認したこと、レビューしてほしい点を書きます。
-- PR の URL を作業記録に残します。
+- `CONFLICT` という表示が出ます。
+- `Automatic merge failed` のような表示が出ます。
+- `group_research_note.md` にコンフリクトマーカーが入ります。
 
-### 9. グループでレビュー担当を決める
+### 8. 学生Bがコンフリクトマーカーを確認する
 
-2人組の場合は、お互いの Pull Request をレビューします。
-
-3人組の場合は、時計回りにレビューします。
-
-例:
+VS Code で `group_research_note.md` を開くと、次のような表示があります。
 
 ```text
-Aさんの PR は Bさんがレビューする
-Bさんの PR は Cさんがレビューする
-Cさんの PR は Aさんがレビューする
+<<<<<<< HEAD
+研究テーマ候補: Javaのエラーメッセージを分類して、初学者向けの説明を考える。
+=======
+研究テーマ候補: 学習ログを使って、学生のつまずきやすい操作を調べる。
+>>>>>>> origin/main
 ```
 
-教室で座っている位置を使う場合は、最初に Aさん、Bさん、Cさんを決めてから、上の対応表に合わせます。
+意味:
+
+- `<<<<<<< HEAD` から `=======` までは、自分の PC にある内容
+- `=======` から `>>>>>>> origin/main` までは、GitHub から取り込もうとしている内容
+
+### 9. 学生Bが内容を手動で修正する
+
+今回は、両方の候補を残して、次のように修正します。
 
 ```text
-Aさん → Bさん → Cさん → Aさん
+研究テーマ候補:
+- 学習ログを使って、学生のつまずきやすい操作を調べる。
+- Javaのエラーメッセージを分類して、初学者向けの説明を考える。
 ```
 
-確認ポイント:
+注意:
 
-- 全員が PR を作成します。
-- 全員が1つ以上の PR をレビューします。
-- レビュー担当が重ならないようにします。
+- `<<<<<<< HEAD`
+- `=======`
+- `>>>>>>> origin/main`
 
-### 10. レビューを行う
+これらの行はすべて削除します。
 
-`REVIEW_GUIDE.md` を見ながら、担当する Pull Request を確認します。
+### 10. 学生Bがコンフリクト解消を commit する
 
-GitHub 上で次の画面を開きます。
-
-```text
-Pull requests -> 担当する PR -> Files changed
-```
-
-レビューコメントの例:
-
-```text
-研究の目的が最初に書かれていて分かりやすいです。
-```
-
-```text
-「使うデータ」に、データの単位や期間が1文あると、さらに読みやすくなりそうです。
-```
-
-```text
-公開できない情報は含まれていないことを確認しました。
-```
-
-確認ポイント:
-
-- 研究テーマが短く説明されているか
-- 研究の目的が専門外の人にも分かるか
-- 使うデータや方法が簡単に書かれているか
-- 公開してはいけない情報が含まれていないか
-- PR 本文にレビューしてほしい点が書かれているか
-
-### 11. レビューコメントに対応する
-
-修正が必要な場合は、同じ feature ブランチで追加修正します。
+学生Bが実行します。
 
 ```bash
 git status
 ```
 
 ```bash
-git add research_introductions/yamada.md
+git add group_research_note.md
 ```
 
 ```bash
-git commit -m "レビュー指摘を反映"
+git commit -m "研究テーマ候補のコンフリクトを解消"
 ```
 
 ```bash
@@ -329,144 +289,176 @@ git push
 
 確認ポイント:
 
-- 追加 commit が同じ Pull Request に反映されるか確認します。
-- レビューコメントに返信して、どのように直したかを書きます。
+- GitHub 上の `group_research_note.md` に、学生Aと学生Bの両方の内容が表示されます。
 
-### 12. Pull Request を merge する
+### 11. 3人目がいる場合
 
-教員の指示がある場合は、レビュー後に Pull Request を `develop` に merge します。
+学生Cもすでに自分の内容を commit している場合、学生Cの `git push` は拒否されます。
 
-確認ポイント:
+学生Cは、学生Bと同じ流れで進めます。
 
-- `develop` ブランチに自分の研究紹介ファイルが追加されているか確認します。
-- 授業で merge しない指示がある場合は、PR を開いた状態のままにします。
+```bash
+git push
+```
+
+拒否されたら、次を実行します。
+
+```bash
+git pull --no-rebase origin main
+```
+
+`group_research_note.md` を修正し、学生A、学生B、学生Cの内容が残るようにします。
+
+修正例:
+
+```text
+研究テーマ候補:
+- 学習ログを使って、学生のつまずきやすい操作を調べる。
+- Javaのエラーメッセージを分類して、初学者向けの説明を考える。
+- 実験ノートの書き方が再現性に与える影響を調べる。
+```
+
+修正後:
+
+```bash
+git add group_research_note.md
+```
+
+```bash
+git commit -m "3人目の研究テーマ候補を追加"
+```
+
+```bash
+git push
+```
 
 ## 演習課題
 
-3人組または2人組で、自分の研究紹介を Pull Request として提出し、相手の研究紹介をレビューします。
+ここからは、上の説明付き基本手順を参考にして、グループで別の行を決め、もう一度コンフリクトを体験します。
 
 課題:
 
-- 全員が新しい feature ブランチを作る
-- 全員が `research_introductions/自分の名前.md` を作成する
-- 全員が Pull Request を作成する
-- 3人組では時計回りにレビューする
-- 2人組ではお互いにレビューする
-- レビュー担当者は、最低1つのコメントを書く
-- PR 作成者は、コメントを受けて必要な修正を1回以上 commit する
+- `group_research_note.md` の `次に調べること:` の行を全員が別々に変更する
+- 全員が commit する
+- 1人目が push する
+- 2人目以降が push で拒否されることを確認する
+- `git pull --no-rebase origin main` でコンフリクトを発生させる
+- 全員の内容が残るように手動で修正する
+- 修正後に `git add`、`git commit`、`git push` を実行する
 
-ブランチ名の例:
-
-```bash
-git switch develop
-```
-
-```bash
-git switch -c feature/add-research-introduction-yamada
-```
-
-ファイル名の例:
+変更する行:
 
 ```text
-research_introductions/yamada.md
+次に調べること: ここに次の作業を書く。
 ```
 
-commit の例:
+修正後の例:
 
-```bash
-git add research_introductions/yamada.md
-```
-
-```bash
-git commit -m "研究紹介を追加"
-```
-
-push の例:
-
-```bash
-git push -u origin feature/add-research-introduction-yamada
+```text
+次に調べること:
+- 関連しそうなキーワードを3つ探す。
+- 先行研究を1本読んで、分からない用語をメモする。
+- 研究室の先輩にテーマの決め方を質問する。
 ```
 
 この課題の主目的:
 
-- Pull Request を「提出場所」ではなく、変更内容を説明して確認してもらう場所として体感すること
-- レビューを通して、相手に伝わる研究説明に改善すること
+- 複数人が同じ場所を編集したとき、Git が自動で判断できない場面があることを体感すること
+- コンフリクト解消は「どちらかを選ぶ」だけでなく、「両方を残す」こともできると理解すること
 
 ## 期待される結果
 
-- feature ブランチから Pull Request が作成される
-- PR 本文テンプレートに沿って説明が書かれている
-- 2人組または3人組でレビューコメントを付けられる
-- 3人組では全員が PR 作成者とレビュー担当者の両方を体験する
-- 必要に応じて追加 commit を同じ PR に反映できる
+- 学生Aの `git push` は成功する
+- 学生Bまたは学生Cの `git push` は一度拒否される
+- `git pull --no-rebase origin main` でコンフリクトが発生する
+- `group_research_note.md` にコンフリクトマーカーが表示される
+- マーカーを削除し、複数人の内容を残した形に修正できる
+- コンフリクト解消後に commit して push できる
 
 ## よくあるエラー
 
-### PR テンプレートが表示されない
+### `rejected` と表示された
 
-確認すること:
+原因:
 
-```text
-.github/pull_request_template.md
+GitHub 側に、自分の PC にはまだない commit があります。
+
+対応:
+
+この演習では、次を実行して GitHub 側の変更を取り込みます。
+
+```bash
+git pull --no-rebase origin main
 ```
 
-この場所にファイルがあるか確認します。
+### コンフリクトが起きない
 
-### `base` ブランチが分からない
+原因:
 
-この演習では、基本的に次の設定にします。
+同じファイルでも、違う行を変更した可能性があります。
 
-```text
-base: develop
-compare: feature/add-research-introduction-yourname
+確認すること:
+
+- 全員が `研究テーマ候補:` の同じ行を変更したか
+- 全員が自分の変更を commit したか
+- 学生Aが先に push したあと、学生Bが pull したか
+
+### `error: you need to resolve your current index first`
+
+原因:
+
+コンフリクトを解消しないまま、別の操作をしようとしています。
+
+対応:
+
+```bash
+git status
 ```
 
-### push 後に PR 作成ボタンが見つからない
+表示された conflict ファイルを修正し、`git add` と `git commit` を行います。
+
+### コンフリクトマーカーが残っている
+
+原因:
+
+修正後のファイルに `<<<<<<<`、`=======`、`>>>>>>>` が残っています。
 
 確認すること:
 
-- GitHub の branch 一覧に `feature/add-research-introduction-yourname` があるか
-- Pull requests タブから `New pull request` を押せるか
-- `base` と `compare` の指定が正しいか
+VS Code の検索で次を探してください。
 
-### ほかの人と同じファイルを編集してしまった
+```text
+<<<<<<<
+```
 
-確認すること:
-
-- 自分のファイル名になっているか確認します。
-- 例: `research_introductions/yamada.md`
-- ほかの人のファイルを変更した場合は、教員に相談してください。
-
-### 研究内容をどこまで書いてよいか分からない
-
-公開してよい範囲だけを書きます。迷う場合は、架空の研究テーマや授業用の例に置き換えます。
+残っていたら削除してから commit します。
 
 ## 提出物
 
-- Pull Request の URL
-- PR 本文に書いた変更説明
-- レビューコメントの内容
-- 追加修正した場合は、その commit の URL
+- グループの共有リポジトリ URL
+- コンフリクトが発生したときの `git status` の記録
+- 修正後の `group_research_note.md`
+- コンフリクト解消 commit の URL
 - 授業中の作業記録
 
 ## 振り返り質問
 
-- Pull Request を作ると、どのような確認がしやすくなりますか。
-- PR 本文には何を書くとレビューしやすくなりますか。
-- レビューコメントを書くとき、どのような表現が相手に伝わりやすいですか。
-- 自分の研究紹介は、レビュー後にどこが分かりやすくなりましたか。
+- なぜ後から push した人の `git push` は拒否されましたか。
+- `HEAD` 側の内容は、誰の PC にあった内容でしたか。
+- `origin/main` 側の内容は、どこから来た内容でしたか。
+- 実際の共同研究でコンフリクトを減らすには、どのような工夫ができそうですか。
 
 ## 提出前チェックリスト
 
-- [ ] グループ用共有リポジトリを `04` フォルダに clone した
-- [ ] `develop` ブランチに移動した
-- [ ] 自分用の feature ブランチを作成した
-- [ ] `research_introductions/自分の名前.md` を作成した
-- [ ] 変更を commit した
-- [ ] feature ブランチを GitHub に push した
-- [ ] Pull Request を作成した
-- [ ] PR 本文テンプレートを記入した
-- [ ] 3人組の場合は時計回りにレビュー担当を決めた
-- [ ] レビュー観点に沿って確認した
-- [ ] レビューコメントに対応した
-- [ ] Pull Request URL を作業記録に書いた
+- [ ] グループ全員が同じ共有リポジトリを clone した
+- [ ] 全員が `group_research_note.md` の同じ行を編集した
+- [ ] 全員が自分の変更を commit した
+- [ ] 1人目が push した
+- [ ] 2人目以降が push の拒否を確認した
+- [ ] `git pull --no-rebase origin main` でコンフリクトを確認した
+- [ ] コンフリクトマーカーを削除した
+- [ ] 全員の内容が残るように修正した
+- [ ] 修正後に `git add group_research_note.md` を実行した
+- [ ] コンフリクト解消 commit を作成した
+- [ ] GitHub に push した
+- [ ] 作業記録を書いた
