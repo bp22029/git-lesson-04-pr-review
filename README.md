@@ -70,6 +70,11 @@ Pull Request は、feature ブランチの変更を `develop` に取り込む前
 
 このレッスンでは、01 で作成した授業用の親フォルダを使います。授業用の親フォルダで次を実行します。
 
+親ディレクトリへの移動
+```bash
+cd ../
+```
+
 ```bash
 git clone <GitHubリポジトリURL>
 ```
